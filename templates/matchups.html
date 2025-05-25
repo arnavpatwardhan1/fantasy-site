@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Week {{ week }} Matchups</title></head>
+<body>
+  {% include 'navbar.html' %}
+  <h1>Week {{ week }} Matchups</h1>
+  <ul>
+    {% for game in matchups %}
+      <li>{{ game.home.owner }} ({{ game.home.points }}) vs {{ game.away.owner }} ({{ game.away.points }})</li>
+    {% endfor %}
+  </ul>
+  <a href="/">Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "team1",
+    "name": "Gridiron Gurus",
+    "owner": "Alice",
+    "record": "4-2",
+    "roster": ["Patrick Mahomes", "Justin Jefferson", "Travis Kelce"]
+  },
+  {
+    "id": "team2",
+    "name": "Touchdown Titans",
+    "owner": "Bob",
+    "record": "3-3",
+    "roster": ["Josh Allen", "Davante Adams", "Saquon Barkley"]
+  }
+]

@@ -1,0 +1,32 @@
+<nav>
+  <ul class="navbar">
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('teams') }}">Teams</a></li>
+    <li><a href="{{ url_for('matchups', week=1) }}">Matchups</a></li>
+    <li><a href="{{ url_for('compare') }}">Compare Teams</a></li>
+  </ul>
+</nav>
+
+<style>
+  .navbar {
+    list-style-type: none;
+    background-color: #343a40;
+    padding: 10px;
+    display: flex;
+    margin: 0;
+  }
+
+  .navbar li {
+    margin-right: 15px;
+  }
+
+  .navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .navbar a:hover {
+    text-decoration: underline;
+  }
+</style>

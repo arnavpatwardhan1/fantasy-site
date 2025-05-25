@@ -1,0 +1,14 @@
+[
+  {
+    "week": 1,
+    "matchups": [
+      { "home": "Gridiron Gurus", "away": "Touchdown Titans" }
+    ]
+  },
+  {
+    "week": 2,
+    "matchups": [
+      { "home": "Touchdown Titans", "away": "Gridiron Gurus" }
+    ]
+  }
+]

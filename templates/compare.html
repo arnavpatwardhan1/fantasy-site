@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Compare Teams</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .team-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    .team-column {
+      width: 45%;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .player-group {
+      margin-bottom: 20px;
+    }
+    .player-group h4 {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+    .player-row {
+      padding: 2px 0;
+    }
+
+    
+  </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+  <h2>Compare Teams</h2>
+  <form method="POST">
+    <label for="team1">Select Team 1:</label>
+    <select name="team1" id="team1" required>
+      <option value="">--Choose Team--</option>
+      {% for team in teams %}
+        <option value="{{ team.id }}" {% if team.id == selected_team1_id %}selected{% endif %}>{{ team.owner }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="team2">Select Team 2:</label>
+    <select name="team2" id="team2" required>
+      <option value="">--Choose Team--</option>
+      {% for team in teams %}
+        <option value="{{ team.id }}" {% if team.id == selected_team2_id %}selected{% endif %}>{{ team.owner }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="grouping">Group by:</label>
+    <select name="grouping" id="grouping">
+      <option value="starters_bench" {% if grouping == 'starters_bench' %}selected{% endif %}>Starters / Bench</option>
+      <option value="by_position" {% if grouping == 'by_position' %}selected{% endif %}>By Position</option>
+    </select>
+
+    <button type="submit">Compare</button>
+  </form>
+
+  {% if team1_grouped and team2_grouped %}
+    <div class="team-container">
+      <div class="team-column">
+        <h3>{% set team1_obj = teams | selectattr('id', 'equalto', selected_team1_id) | list | first %}
+        {{ team1_obj.owner if team1_obj else 'Unknown' }}</h3>
+        {% for group_name, players in team1_grouped.items() %}
+          <div class="player-group">
+            <h4>{{ group_name }}</h4>
+            {% for p in players %}
+              <div class="player-row {{ p.position | upper if p.position else 'default' }}">
+            {{ p.name }} ({{ p.position }})
+                </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="team-column">
+        <h3>{% set team2_obj = teams | selectattr('id', 'equalto', selected_team2_id) | list | first %}
+        {{ team2_obj.owner if team2_obj else 'Unknown' }}</h3>
+        {% for group_name, players in team2_grouped.items() %}
+          <div class="player-group">
+            <h4>{{ group_name }}</h4>
+            {% for p in players %}
+              <div class="player-row {{ p.position | upper if p.position else 'default' }}">
+            {{ p.name }} ({{ p.position }})
+                </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</body>
+</html>

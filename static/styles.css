@@ -1,0 +1,14 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+h1 {
+  color: darkblue;
+}
+.QB { color: #007bff; }
+.RB { color: #28a745; }
+.WR { color: #dc3545; }
+.TE { color: #6f42c1; }
+.K { color: #fd7e14; }
+.DEF { color: #17a2b8; }
+.default { color: #6c757d; }
