@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from sleeper import build_team_data, build_matchup_data
 import json
 
@@ -16,7 +16,7 @@ def teams():
     team_data = build_team_data(LEAGUE_ID)
     return render_template("teams.html", teams=team_data)
 
-@app.route("/week/<int:week>")
+@app.route("/matchups/<int:week>")
 def matchups(week):
     matchup_data = build_matchup_data(LEAGUE_ID, week)
     return render_template("matchups.html", matchups=matchup_data, week=week)
@@ -25,13 +25,16 @@ def matchups(week):
 def compare():
     teams = build_team_data(LEAGUE_ID)
 
-    selected_team1_id = request.form.get('team1')
-    selected_team2_id = request.form.get('team2')
-    grouping = request.form.get('grouping', 'starters_bench')  # default grouping
+    # Accept team IDs from GET (for links) or POST (form submit)
+    selected_team1_id = request.args.get('team1') or request.form.get('team1')
+    selected_team2_id = request.args.get('team2') or request.form.get('team2')
+    grouping = request.args.get('grouping') or request.form.get('grouping', 'starters_bench')
 
+    # Find teams
     team1 = next((t for t in teams if t['id'] == selected_team1_id), None)
     team2 = next((t for t in teams if t['id'] == selected_team2_id), None)
 
+    # Grouping logic
     def group_players(team):
         if not team:
             return {"QB": [], "RB": [], "WR": [], "TE": [], "Other": []}
@@ -48,7 +51,6 @@ def compare():
                     groups["Other"].append(p)
             return groups
         else:
-            # starters and bench grouping
             return {
                 "Starters": team['starters'],
                 "Bench": team['bench']
@@ -66,6 +68,9 @@ def compare():
         team1_grouped=team1_grouped,
         team2_grouped=team2_grouped
     )
+    
+    
+
 
 if __name__ == "__main__":
     app.run(debug=True)
