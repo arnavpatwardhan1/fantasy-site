@@ -1,11 +1,44 @@
 <!DOCTYPE html>
-<html>
-<head><title>Fantasy League Home</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Football Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color:rgb(141, 198, 254);
+    }
+    .hero {
+      padding: 4rem 1rem;
+      background-color:rgb(255, 255, 255);
+      border-radius: 10px;
+      box-shadow: 0 0 10px hsl(0, 100.00%, 50.80%);
+    }
+  </style>
+</head>
 <body>
-    {% include 'navbar.html' %}
-  <h1>Welcome to the Fantasy League Site</h1>
-  <a href="/teams">View Teams</a><br>
-  <a href="/week/1">Week 1 Matchups</a><br>
-  <a href="/compare">Compare Teams</a>
+
+  
+
+  <div class="container mt-5">
+    <div class="hero text-center">
+      <h1 class="display-4">🏈 Fantasy Football Dashboard</h1>
+      <p class="lead text-muted">Explore teams, matchups, and compare lineups side by side.</p>
+
+      <div class="row mt-4 g-3 justify-content-center">
+        <div class="col-sm-6 col-md-4">
+          <a href="/teams" class="btn btn-outline-primary btn-lg w-100">👥 View Teams</a>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <a href="/matchups/1" class="btn btn-outline-success btn-lg w-100">📅 View Matchups</a>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <a href="/compare" class="btn btn-outline-warning btn-lg w-100">📊 Compare Teams</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
