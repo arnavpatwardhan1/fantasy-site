@@ -21,7 +21,13 @@
               {% for player in team.starters %}
                 {% set cls = player.position if player.position in ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'] else 'default' %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span class="{{ cls }}">{{ player.name }} <small class="text-muted">({{ player.position }})</small></span>
+                  <span class="{{ cls }}">
+                    {{ player.name }} <small class="text-muted">({{ player.position }})</small>
+                  </span>
+                  <div>
+                    {% if player.adp %}<span class="badge bg-primary me-1">ADP: {{ player.adp }}</span>{% endif %}
+                    {% if player.ktc_value %}<span class="badge bg-success">KTC: {{ player.ktc_value }}</span>{% endif %}
+                  </div>
                 </li>
               {% endfor %}
             </ul>
@@ -30,7 +36,13 @@
               {% for player in team.bench %}
                 {% set cls = player.position if player.position in ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'] else 'default' %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span class="{{ cls }}">{{ player.name }} <small class="text-muted">({{ player.position }})</small></span>
+                  <span class="{{ cls }}">
+                    {{ player.name }} <small class="text-muted">({{ player.position }})</small>
+                  </span>
+                  <div>
+                    {% if player.adp %}<span class="badge bg-primary me-1">ADP: {{ player.adp }}</span>{% endif %}
+                    {% if player.ktc_value %}<span class="badge bg-success">KTC: {{ player.ktc_value }}</span>{% endif %}
+                  </div>
                 </li>
               {% endfor %}
             </ul>

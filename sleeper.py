@@ -1,7 +1,6 @@
 import requests
 
 BASE_URL = "https://api.sleeper.app/v1"
-FANTASY_PROS_RANKINGS_URL = "https://api.fantasypros.com/public/v1/consensus-rankings/nfl/overall"
 
 
 def get_league_users(league_id):
@@ -37,39 +36,20 @@ def get_user_display_name_map(league_id):
     return {user['user_id']: user['display_name'] for user in users}
 
 
-def get_fantasypros_rankings():
-    try:
-        response = requests.get(FANTASY_PROS_RANKINGS_URL)
-        response.raise_for_status()
-        rankings_data = response.json()
-        print(f"FantasyPros rankings fetched: {len(rankings_data.get('players', []))} players")  # Debug print
-        return {player['player_name']: player['rank_ecr'] for player in rankings_data.get('players', [])}
-    except Exception as e:
-        print(f"Error fetching FantasyPros rankings: {e}")
-        return {}
-
-
-
 def get_player_name_map():
     url = f"{BASE_URL}/players/nfl"
     response = requests.get(url)
     response.raise_for_status()
     data = response.json()
 
-    rankings = get_fantasypros_rankings()
-
     player_map = {}
     for pid, pinfo in data.items():
-        name = pinfo.get("full_name", "Unknown")
-        position = pinfo.get("position", "")
-        rank = rankings.get(name, "N/A")
         player_map[pid] = {
-            "name": name,
-            "position": position,
-            "rank": f"#{rank}" if rank != "N/A" else "N/A"
+            "name": pinfo.get("full_name", "Unknown"),
+            "position": pinfo.get("position", "")
         }
-
     return player_map
+
 
 
 def build_team_data(league_id):

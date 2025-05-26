@@ -1,96 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Compare Teams</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
-    .team-container {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
+    .player-card {
+      transition: all 0.2s ease;
+      border-left: 4px solid transparent;
     }
-    .team-column {
-      width: 45%;
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 6px;
+    .player-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    .player-group {
-      margin-bottom: 20px;
+    .QB { border-left-color: #3498db; }
+    .RB { border-left-color: #2ecc71; }
+    .WR { border-left-color: #e74c3c; }
+    .TE { border-left-color: #f39c12; }
+    .K, .DEF { border-left-color: #9b59b6; }
+    .player-name {
+      font-weight: 500;
     }
-    .player-group h4 {
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 4px;
+    .position-team {
+      font-size: 0.85rem;
+      color: #6c757d;
     }
-    .player-row {
-      padding: 2px 0;
+    .rank-badge {
+      font-size: 0.75rem;
     }
-
-    
+    .group-header {
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .bg-purple {
+    background-color: #6a11cb; /* Purple gradient example */
+    color: white;
+    border: none;
+  }
+  .bg-orange {
+    background-color:rgb(13, 208, 111); /* Purple gradient example */
+    color: white;
+    border: none;
+  }
   </style>
 </head>
-<body>
-    {% include 'navbar.html' %}
-  <h2>Compare Teams</h2>
-  <form method="POST">
-    <label for="team1">Select Team 1:</label>
-    <select name="team1" id="team1" required>
-      <option value="">--Choose Team--</option>
-      {% for team in teams %}
-        <option value="{{ team.id }}" {% if team.id == selected_team1_id %}selected{% endif %}>{{ team.owner }}</option>
-      {% endfor %}
-    </select>
-
-    <label for="team2">Select Team 2:</label>
-    <select name="team2" id="team2" required>
-      <option value="">--Choose Team--</option>
-      {% for team in teams %}
-        <option value="{{ team.id }}" {% if team.id == selected_team2_id %}selected{% endif %}>{{ team.owner }}</option>
-      {% endfor %}
-    </select>
-
-    <label for="grouping">Group by:</label>
-    <select name="grouping" id="grouping">
-      <option value="starters_bench" {% if grouping == 'starters_bench' %}selected{% endif %}>Starters / Bench</option>
-      <option value="by_position" {% if grouping == 'by_position' %}selected{% endif %}>By Position</option>
-    </select>
-
-    <button type="submit">Compare</button>
-  </form>
-
-  {% if team1_grouped and team2_grouped %}
-    <div class="team-container">
-      <div class="team-column">
-        <h3>{% set team1_obj = teams | selectattr('id', 'equalto', selected_team1_id) | list | first %}
-        {{ team1_obj.owner if team1_obj else 'Unknown' }}</h3>
-        {% for group_name, players in team1_grouped.items() %}
-          <div class="player-group">
-            <h4>{{ group_name }}</h4>
-            {% for p in players %}
-              <div class="player-row {{ p.position | upper if p.position else 'default' }}">
-            {{ p.name }} ({{ p.position }})
-                </div>
-            {% endfor %}
+<body class="bg-light">
+  {% include 'navbar.html' %}
+  
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h2 class="card-title text-center mb-4">Compare Teams</h2>
+            
+            <form method="POST" class="row g-3">
+              <div class="col-md-4">
+                <label for="team1" class="form-label">Team 1</label>
+                <select name="team1" id="team1" class="form-select" required>
+                  <option value="">Select Team</option>
+                  {% for team in teams %}
+                    <option value="{{ team.id }}" {% if team.id == selected_team1_id %}selected{% endif %}>
+                      {{ team.owner }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+              <div class="col-md-4">
+                <label for="team2" class="form-label">Team 2</label>
+                <select name="team2" id="team2" class="form-select" required>
+                  <option value="">Select Team</option>
+                  {% for team in teams %}
+                    <option value="{{ team.id }}" {% if team.id == selected_team2_id %}selected{% endif %}>
+                      {{ team.owner }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+              <div class="col-md-3">
+                <label for="grouping" class="form-label">Group By</label>
+                <select name="grouping" id="grouping" class="form-select">
+                  <option value="starters_bench" {% if grouping == 'starters_bench' %}selected{% endif %}>Starters/Bench</option>
+                  <option value="by_position" {% if grouping == 'by_position' %}selected{% endif %}>Position</option>
+                </select>
+              </div>
+              
+              <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Go!</button>
+              </div>
+            </form>
           </div>
-        {% endfor %}
-      </div>
+        </div>
 
-      <div class="team-column">
-        <h3>{% set team2_obj = teams | selectattr('id', 'equalto', selected_team2_id) | list | first %}
-        {{ team2_obj.owner if team2_obj else 'Unknown' }}</h3>
-        {% for group_name, players in team2_grouped.items() %}
-          <div class="player-group">
-            <h4>{{ group_name }}</h4>
-            {% for p in players %}
-              <div class="player-row {{ p.position | upper if p.position else 'default' }}">
-            {{ p.name }} ({{ p.position }})
-                </div>
-            {% endfor %}
+        {% if team1_grouped and team2_grouped %}
+        <div class="row">
+          <!-- Team 1 Column -->
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                  {% set team1_obj = teams | selectattr('id', 'equalto', selected_team1_id) | list | first %}
+                  {{ team1_obj.owner if team1_obj else 'Team 1' }}
+                </h4>
+              </div>
+              <div class="card-body">
+                {% for group_name, players in team1_grouped.items() %}
+                  <div class="mb-4">
+                    <h5 class="group-header p-2 mb-3 rounded">{{ group_name }}</h5>
+                    <div class="row g-2">
+                      {% for p in players %}
+                        <div class="col-12">
+                          <div class="player-card card mb-2 {{ p.position if p.position in ['QB','RB','WR','TE','K','DEF'] else '' }}">
+                            <div class="card-body py-2">
+                              <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                  <span class="player-name">{{ p.name }}</span>
+                                  <span class="position-team ms-2">
+                                    ({{ p.position }}{% if p.team %} - {{ p.team }}{% endif %})
+                                  </span>
+                                </div>
+                                <div class="text-end">
+                                  {% if p.adp != 'N/A' %}
+                                    <span class="badge bg-orange rank-badge me-1">
+                                      ADP: {{ "%.1f"|format(p.adp) if p.adp is number else p.adp }}
+                                    </span>
+                                  {% endif %}
+                                  {% if p.ktc_value != 'N/A' %}
+                                    <span class="badge bg-purple rank-badge">
+                                      KTC: {{ p.ktc_value }}
+                                    </span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
-        {% endfor %}
+          
+          <!-- Team 2 Column -->
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                  {% set team2_obj = teams | selectattr('id', 'equalto', selected_team2_id) | list | first %}
+                  {{ team2_obj.owner if team2_obj else 'Team 2' }}
+                </h4>
+              </div>
+              <div class="card-body">
+                {% for group_name, players in team2_grouped.items() %}
+                  <div class="mb-4">
+                    <h5 class="group-header p-2 mb-3 rounded">{{ group_name }}</h5>
+                    <div class="row g-2">
+                      {% for p in players %}
+                        <div class="col-12">
+                          <div class="player-card card mb-2 {{ p.position if p.position in ['QB','RB','WR','TE','K','DEF'] else '' }}">
+                            <div class="card-body py-2">
+                              <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                  <span class="player-name">{{ p.name }}</span>
+                                  <span class="position-team ms-2">
+                                    ({{ p.position }}{% if p.team %} - {{ p.team }}{% endif %})
+                                  </span>
+                                </div>
+                                <div class="text-end">
+                                  {% if p.adp != 'N/A' %}
+                                    <span class="badge bg-orange rank-badge me-1">
+                                      ADP: {{ "%.1f"|format(p.adp) if p.adp is number else p.adp }}
+                                    </span>
+                                  {% endif %}
+                                  {% if p.ktc_value != 'N/A' %}
+                                    <span class="badge bg-purple rank-badge">
+                                      KTC: {{ p.ktc_value }}
+                                    </span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
-  {% endif %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
